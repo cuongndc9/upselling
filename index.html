@@ -9,82 +9,20 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f8fc;
-            color: #333;
+            background-color: #f9f9f9;
         }
-
         .container {
-            max-width: 900px;
+            max-width: 800px;
             margin: 50px auto;
             padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
         }
-
         h1 {
             text-align: center;
             color: #1353C4;
         }
-
-        .step {
-            margin-bottom: 20px;
-        }
-
-        label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 10px;
-        }
-
-        input, button {
-            padding: 10px;
-            margin: 5px 0;
-            font-size: 16px;
-            width: calc(100% - 22px);
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        input:focus {
-            border-color: #1353C4;
-            outline: none;
-            box-shadow: 0 0 5px rgba(19, 83, 196, 0.3);
-        }
-
-        button {
-            cursor: pointer;
-            background-color: #1353C4;
-            color: #fff;
-            border: none;
-            font-weight: bold;
-        }
-
-        button:hover {
-            background-color: #0e3a9a;
-        }
-
-        .tier-list {
-            margin-top: 10px;
-            padding: 10px;
-            border: 1px solid #dedede;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-        }
-
-        .tier-item {
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 5px;
-            transition: background-color 0.3s;
-        }
-
-        .tier-item.highlight {
-            background-color: #e0f7e9;
-            border-left: 5px solid #26AA53;
-        }
-
         .message {
             margin: 20px 0;
             padding: 15px;
@@ -92,21 +30,47 @@
             border-radius: 5px;
             background-color: #f3f3f3;
         }
-
         .highlight {
             font-weight: bold;
         }
-
         .highlight-green {
             color: #26AA53;
         }
-
         .highlight-orange {
             color: #FF5722;
         }
-
         .highlight-blue {
             color: #1353C4;
+        }
+        .steps {
+            margin-top: 30px;
+        }
+        .step {
+            margin-bottom: 20px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px 0;
+            font-size: 16px;
+        }
+        button {
+            cursor: pointer;
+            background-color: #1353C4;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0e3a9a;
+        }
+        .tier-list {
+            margin-top: 10px;
+            border: 1px solid #dedede;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+        .tier-item {
+            margin-bottom: 5px;
         }
     </style>
 </head>
@@ -114,17 +78,18 @@
     <div class="container">
         <h1>Upselling Message Builder</h1>
 
-        <div class="step">
-            <label>Input Tier Data (Min Amount & Savings):</label>
-            <input type="number" id="minAmount" placeholder="Minimum Amount (VND)" />
-            <input type="number" id="maxSavings" placeholder="Savings (VND)" />
-            <button onclick="addTier()">Add Tier</button>
-            <div id="tierList" class="tier-list"></div>
-        </div>
-
-        <div class="step">
-            <label for="subtotal">Subtotal Amount (VND):</label>
-            <input type="number" id="subtotal" placeholder="Enter subtotal" />
+        <div class="steps">
+            <div class="step">
+                <label>Input Tier Data (Min Amount & Savings):</label>
+                <input type="number" id="minAmount" placeholder="Minimum Amount (VND)" />
+                <input type="number" id="maxSavings" placeholder="Savings (VND)" />
+                <button onclick="addTier()">Add Tier</button>
+                <div id="tierList" class="tier-list"></div>
+            </div>
+            <div class="step">
+                <label for="subtotal">Subtotal Amount (VND):</label>
+                <input type="number" id="subtotal" placeholder="Enter subtotal" />
+            </div>
             <button onclick="generateUpsellingMessage()">Generate Message</button>
         </div>
 
@@ -147,30 +112,11 @@
             }
 
             tiers.push({ MinAmount: minAmount, MaxDiscount: maxSavings });
-            tiers = sortAndMergeStackSavings(tiers); // Sort and merge the stacks
+            tiers = tiers.sort((a, b) => a.MinAmount - b.MinAmount);
             updateTierList();
 
-            // Clear inputs
             document.getElementById("minAmount").value = '';
             document.getElementById("maxSavings").value = '';
-        }
-
-        function sortAndMergeStackSavings(stacks) {
-            stacks.sort((a, b) => {
-                if (a.MinAmount === b.MinAmount) {
-                    return b.MaxDiscount - a.MaxDiscount;
-                }
-                return a.MinAmount - b.MinAmount;
-            });
-
-            let mergedStacks = [];
-            stacks.forEach((stack, index) => {
-                if (index === 0 || stack.MinAmount !== stacks[index - 1].MinAmount) {
-                    mergedStacks.push(stack);
-                }
-            });
-
-            return mergedStacks;
         }
 
         function updateTierList() {
@@ -180,8 +126,7 @@
             tiers.forEach((tier, index) => {
                 const tierItem = document.createElement("div");
                 tierItem.classList.add("tier-item");
-                tierItem.dataset.index = index;
-                tierItem.innerHTML = `Tier ${index + 1}: Spend <strong>${tier.MinAmount.toLocaleString()}</strong>đ to save <strong>${tier.MaxDiscount.toLocaleString()}</strong>đ`;
+                tierItem.innerHTML = `Tier ${index + 1}: Spend ${tier.MinAmount.toLocaleString()}đ to save ${tier.MaxDiscount.toLocaleString()}đ`;
                 tierList.appendChild(tierItem);
             });
         }
@@ -196,19 +141,19 @@
 
             if (subTotal < lowestStack.MinAmount) {
                 return {
-                    tier: 0,
-                    remainingAmount: lowestStack.MinAmount - subTotal,
-                    nextSavings: highestStack.MaxDiscount,
+                    tier: 'Lowest',
+                    remainingAmount: (lowestStack.MinAmount - subTotal).toLocaleString() + 'đ',
+                    nextSavings: lowestStack.MaxDiscount.toLocaleString() + 'đ',
                     currentSavings: ''
                 };
             }
 
             if (subTotal >= highestStack.MinAmount) {
                 return {
-                    tier: stacks.length - 1,
+                    tier: 'Highest',
                     remainingAmount: '',
                     nextSavings: '',
-                    currentSavings: highestStack.MaxDiscount
+                    currentSavings: highestStack.MaxDiscount.toLocaleString() + 'đ'
                 };
             }
 
@@ -218,10 +163,10 @@
 
                 if (subTotal >= currentStack.MinAmount && subTotal < nextStack.MinAmount) {
                     return {
-                        tier: i,
-                        remainingAmount: nextStack.MinAmount - subTotal,
-                        currentSavings: currentStack.MaxDiscount,
-                        nextSavings: nextStack.MaxDiscount
+                        tier: 'Middle',
+                        remainingAmount: (nextStack.MinAmount - subTotal).toLocaleString() + 'đ',
+                        currentSavings: currentStack.MaxDiscount.toLocaleString() + 'đ',
+                        nextSavings: nextStack.MaxDiscount.toLocaleString() + 'đ'
                     };
                 }
             }
@@ -234,21 +179,14 @@
 
             const data = buildUpSellingData(tiers, subTotal);
 
-            // Clear all highlights
-            document.querySelectorAll(".tier-item").forEach(item => item.classList.remove("highlight"));
-
-            if (data.tier !== '') {
-                document.querySelector(`.tier-item[data-index='${data.tier}']`).classList.add("highlight");
-            }
-
             let message = "";
-            if (data.remainingAmount) {
+            if (data.tier === "Lowest" || data.tier === "Middle") {
                 message = `
-                    👍 ${data.currentSavings ? `You've saved <span class="highlight highlight-orange">${data.currentSavings.toLocaleString()}</span>. ` : ""}
-                    Add <span class="highlight">${data.remainingAmount.toLocaleString()}</span>đ more to save <span class="highlight highlight-green">${data.nextSavings.toLocaleString()}</span>.
+                    👍 ${data.currentSavings ? `You've saved <span class="highlight highlight-orange">${data.currentSavings}</span>.` : ""}
+                    Add <span class="highlight">${data.remainingAmount}</span> more to save <span class="highlight highlight-green">${data.nextSavings}</span>.
                 `;
-            } else if (data.currentSavings) {
-                message = `🎉 Yay, you've saved <span class="highlight highlight-green">${data.currentSavings.toLocaleString()}</span>!`;
+            } else if (data.tier === "Highest") {
+                message = `🎉 Yay, you've saved <span class="highlight highlight-green">${data.currentSavings}</span>!`;
             } else {
                 message = `💡 Start shopping to unlock amazing savings!`;
             }
