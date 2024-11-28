@@ -3,7 +3,7 @@
 ## 🌟 Overview  
 The **Upselling Message Builder** helps businesses create personalized upselling messages to encourage customers to maximize their savings. Define savings tiers, input a subtotal, and instantly generate tailored messages with clear visual highlights.
 
-![🛍️ Upselling Message Builder Demo](upselling.jpeg)
+![🛍️ Upselling Message Builder Demo](upselling.png)
 
 ## ✨ Features  
 - **📊 Add Tier Data**: Input minimum amounts and savings values.  
